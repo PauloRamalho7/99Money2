@@ -34,7 +34,7 @@ type
     Rectangle2: TRectangle;
     Layout7: TLayout;
     Label8: TLabel;
-    Label9: TLabel;
+    lbl_todos_lanc: TLabel;
     lv_lancamento: TListView;
     img_categoria: TImage;
     procedure FormShow(Sender: TObject);
@@ -43,11 +43,16 @@ type
     procedure lv_lancamentoItemClickEx(const Sender: TObject;
       ItemIndex: Integer; const LocalClickPos: TPointF;
       const ItemObject: TListItemDrawable);
+    procedure lbl_todos_lancClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-    procedure AddLancamento(id_lancamento, descricao, categoria: string;
-                                      valor : double; dt_lanc : TDateTime;
-                                      foto: TStream);
+
   public
+    procedure SetupLancamento(item: TListViewItem; aWidth: Single);
+    procedure AddLancamento(listview : TListView;
+                            id_lancamento, descricao, categoria: string;
+                            valor : double; dt_lanc : TDateTime;
+                            foto: TStream);
     { Public declarations }
   end;
 
@@ -56,15 +61,19 @@ var
 
 implementation
 
+uses
+  UnitLancamentos;
+
 {$R *.fmx}
 
-procedure TFrmPrincipal.AddLancamento(id_lancamento, descricao, categoria: string;
+procedure TFrmPrincipal.AddLancamento(listview : TListView;
+                                      id_lancamento, descricao, categoria: string;
                                       valor : double; dt_lanc : TDateTime;
                                       foto: TStream);
 var
     bmp : TBitmap;
 begin
-    with lv_lancamento.Items.Add do
+    with listview.Items.Add do
     begin
         TagString := id_lancamento;
 
@@ -85,6 +94,28 @@ begin
     end;
 end;
 
+procedure TFrmPrincipal.SetupLancamento(item : TListViewItem; aWidth: Single);
+begin
+ {   if lv_lancamento.Width < 200 then
+    begin
+        TListItemImage(Item.Objects.FindDrawable('ImgIcone')).Visible := false;
+        TListItemText(Item.Objects.FindDrawable('TxtDescricao')).PlaceOffset.X := 22;
+    end;
+}
+    TListItemText(Item.Objects.FindDrawable('TxtDescricao')).Width := aWidth -
+                TListItemText(Item.Objects.FindDrawable('TxtDescricao')).PlaceOffset.X -100;
+
+end;
+
+procedure TFrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+    if Assigned(FrmLancamentos) then
+    begin
+        FrmLancamentos.DisposeOf;
+        FrmLancamentos := nil;
+    end;
+end;
+
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 var
     foto : TStream;
@@ -95,9 +126,18 @@ begin
     foto.Position := 0;
 
     for x := 1 to 10 do
-        AddLancamento('00001', 'Compra de Passagem teste 123456 aaaaa bbbbb cccccc ddddddddd', 'Transporte', -45, date, foto);
+        AddLancamento(lv_lancamento,
+                      '00001', 'Compra de Passagem teste 123456 ', 'Transporte',
+                       -45, date, foto);
 
     foto.DisposeOf;
+end;
+
+procedure TFrmPrincipal.lbl_todos_lancClick(Sender: TObject);
+begin
+    if not Assigned(FrmLancamentos) then
+        Application.CreateForm(TFrmLancamentos,FrmLancamentos);
+    FrmLancamentos.Show;
 end;
 
 procedure TFrmPrincipal.lv_lancamentoItemClickEx(const Sender: TObject;
@@ -123,14 +163,7 @@ end;
 procedure TFrmPrincipal.lv_lancamentoUpdateObjects(const Sender: TObject;
   const AItem: TListViewItem);
 begin
-    if lv_lancamento.Width < 200 then
-    begin
-        TListItemImage(AItem.Objects.FindDrawable('ImgIcone')).Visible := false;
-        TListItemText(AItem.Objects.FindDrawable('TxtDescricao')).PlaceOffset.X := 22;
-    end;
-
-{    TListItemText(AItem.Objects.FindDrawable('TxtDescricao')).Width := lv_lancamento.Width -
-                TListItemText(AItem.Objects.FindDrawable('TxtDescricao')).PlaceOffset.X -100;}
+    SetupLancamento(AItem,lv_lancamento.Width);
 end;
 
 end.
