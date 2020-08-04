@@ -37,6 +37,7 @@ type
     lbl_todos_lanc: TLabel;
     lv_lancamento: TListView;
     img_categoria: TImage;
+    StyleBook1: TStyleBook;
     procedure FormShow(Sender: TObject);
     procedure lv_lancamentoUpdateObjects(const Sender: TObject;
       const AItem: TListViewItem);
@@ -45,6 +46,7 @@ type
       const ItemObject: TListItemDrawable);
     procedure lbl_todos_lancClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Image4Click(Sender: TObject);
   private
 
   public
@@ -131,6 +133,11 @@ begin
                        -45, date, foto);
 
     foto.DisposeOf;
+end;
+
+procedure TFrmPrincipal.Image4Click(Sender: TObject);
+begin
+    FrmLancamentos.EditarLancamento('');
 end;
 
 procedure TFrmPrincipal.lbl_todos_lancClick(Sender: TObject);
