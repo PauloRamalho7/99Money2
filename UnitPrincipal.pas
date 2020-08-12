@@ -3,18 +3,32 @@ unit UnitPrincipal;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Layouts,
-  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
-  FMX.ListView;
+  FMX.Controls,
+  FMX.Controls.Presentation,
+  FMX.Dialogs,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Layouts,
+  FMX.ListView,
+  FMX.ListView.Adapters.Base,
+  FMX.ListView.Appearances,
+  FMX.ListView.Types,
+  FMX.Objects,
+  FMX.StdCtrls,
+  FMX.Types,
+
+  System.Classes,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Variants;
 
 type
   TFrmPrincipal = class(TForm)
     Layout1: TLayout;
     img_menu: TImage;
     Circle1: TCircle;
-    Image1: TImage;
+    img_notif: TImage;
     Label1: TLabel;
     Layout2: TLayout;
     Label2: TLabel;
@@ -47,9 +61,13 @@ type
     procedure lbl_todos_lancClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Image4Click(Sender: TObject);
+    procedure img_menuClick(Sender: TObject);
   private
 
   public
+    procedure SetupCategoria(item: TListViewItem; aWidth: Single);
+    procedure AddCategoria(listview: TListView; id_categoria, categoria: string;
+                           foto: TStream);
     procedure SetupLancamento(item: TListViewItem; aWidth: Single);
     procedure AddLancamento(listview : TListView;
                             id_lancamento, descricao, categoria: string;
@@ -64,6 +82,7 @@ var
 implementation
 
 uses
+  UnitCategorias,
   UnitLancamentos;
 
 {$R *.fmx}
@@ -96,6 +115,32 @@ begin
     end;
 end;
 
+procedure TFrmPrincipal.AddCategoria(listview : TListView;
+                                      id_categoria,
+                                      categoria: string;
+                                      foto: TStream);
+var
+    bmp : TBitmap;
+begin
+    with listview.Items.Add do
+    begin
+        TagString := id_categoria;
+
+        TListItemText(Objects.FindDrawable('TxtCategoria')).Text := categoria;
+
+        if foto <> nil then
+        begin
+            bmp := TBitmap.Create;
+            bmp.LoadFromStream(foto);
+            TListItemImage(Objects.FindDrawable('ImgIcone')).OwnsBitmap := true;
+            TListItemImage(Objects.FindDrawable('ImgIcone')).Bitmap     := bmp;
+            //não precisa destruir pq está dentro da listview;
+        end;
+
+    end;
+end;
+
+
 procedure TFrmPrincipal.SetupLancamento(item : TListViewItem; aWidth: Single);
 begin
  {   if lv_lancamento.Width < 200 then
@@ -108,6 +153,14 @@ begin
                 TListItemText(Item.Objects.FindDrawable('TxtDescricao')).PlaceOffset.X -100;
 
 end;
+
+procedure TFrmPrincipal.SetupCategoria(item : TListViewItem; aWidth: Single);
+begin
+    TListItemText(Item.Objects.FindDrawable('TxtCategoria')).Width := aWidth -
+                TListItemText(Item.Objects.FindDrawable('TxtCategoria')).PlaceOffset.X -20;
+
+end;
+
 
 procedure TFrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -138,6 +191,15 @@ end;
 procedure TFrmPrincipal.Image4Click(Sender: TObject);
 begin
     FrmLancamentos.EditarLancamento('');
+end;
+
+procedure TFrmPrincipal.img_menuClick(Sender: TObject);
+begin
+    if NOT Assigned(FrmCategorias) then
+        Application.CreateForm(TFrmCategorias,FrmCategorias);
+
+    FrmCategorias.Show;
+
 end;
 
 procedure TFrmPrincipal.lbl_todos_lancClick(Sender: TObject);
