@@ -3,11 +3,29 @@ unit UnitPrincipal;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Layouts, FMX.Controls.Presentation, FMX.StdCtrls, FMX.ListView.Types,
-  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView,
-  UnitCategorias, UnitLancamentos, FMX.Ani;
+  UnitCategorias,
+  UnitLancamentos,
+
+  FMX.Ani,
+  FMX.Controls,
+  FMX.Controls.Presentation,
+  FMX.Dialogs,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Layouts,
+  FMX.ListView,
+  FMX.ListView.Adapters.Base,
+  FMX.ListView.Appearances,
+  FMX.ListView.Types,
+  FMX.Objects,
+  FMX.StdCtrls,
+  FMX.Types,
+
+  System.Classes,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Variants;
 
 type
   TFrmPrincipal = class(TForm)
@@ -37,7 +55,7 @@ type
     lbl_todos_lanc: TLabel;
     lv_lancamento: TListView;
     img_categoria: TImage;
-    StyleBook1: TStyleBook;
+    StyleBook: TStyleBook;
     rect_menu: TRectangle;
     layout_principal: TLayout;
     AnimationMenu: TFloatAnimation;

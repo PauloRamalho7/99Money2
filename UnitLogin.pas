@@ -3,16 +3,33 @@ unit UnitLogin;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
-  FMX.Layouts, FMX.Controls.Presentation, FMX.Edit, FMX.StdCtrls, FMX.TabControl,
-  System.Actions, FMX.ActnList, u99Permissions, FMX.MediaLibrary.Actions,
+  u99Permissions,
+
+  FMX.ActnList,
+  FMX.Controls,
+  FMX.Controls.Presentation,
+  FMX.Dialogs,
+  FMX.Edit,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Layouts,
+  FMX.MediaLibrary.Actions,
+  FMX.Objects,
+  FMX.StdActns,
+  FMX.StdCtrls,
+  FMX.TabControl,
+  FMX.Types,
 
   {$IFDEF ANDROID}
   FMX.VirtualKeyboard, FMX.Platform,
   {$ENDIF}
 
-  FMX.StdActns;
+  System.Actions,
+  System.Classes,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Variants;
 
 type
   TFrmLogin = class(TForm)

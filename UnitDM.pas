@@ -49,7 +49,9 @@ begin
     begin
         {$IFDEF MSWINDOWS}
         try
-            Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\DB\banco.db';
+//            Params.Values['Database'] := System.SysUtils.GetCurrentDir + '\DB\banco.db';
+            Params.Values['Database'] := 'D:\Projetos\99Money2\DB\banco.db';
+
             Connected := true;
         except on E:Exception do
                 raise Exception.Create('Erro de conexão com o banco de dados: ' + E.Message);

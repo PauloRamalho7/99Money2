@@ -1,0 +1,11 @@
+object FrmLancamebtosCad: TFrmLancamebtosCad
+  Left = 0
+  Top = 0
+  Caption = 'Cadastro de Lan'#231'amentos'
+  ClientHeight = 580
+  ClientWidth = 380
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+end
