@@ -3,33 +3,17 @@ unit UnitCategoriasCad;
 interface
 
 uses
-  FMX.Controls,
-  FMX.Controls.Presentation,
-  FMX.Dialogs,
-  FMX.Edit,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Layouts,
-  FMX.ListBox,
-  FMX.Objects,
-  FMX.StdCtrls,
-  FMX.Types,
-
-  System.Classes,
-  System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox;
 
 type
   TFrmCategoriasCad = class(TForm)
-    lyt_toolbar: TLayout;
+    Layout1: TLayout;
     lbl_titulo: TLabel;
     img_voltar: TImage;
-    img_salvar: TImage;
-    rect_botton: TRectangle;
-    img_add: TImage;
-    Layout1: TLayout;
+    img_save: TImage;
+    Layout2: TLayout;
     Label2: TLabel;
     edt_login_email: TEdit;
     Line1: TLine;
@@ -68,9 +52,9 @@ type
     Image15: TImage;
     Image16: TImage;
     img_selecao: TImage;
+    procedure img_voltarClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Image1Click(Sender: TObject);
-    procedure img_voltarClick(Sender: TObject);
   private
     icone_selecionado: TBitmap;
     procedure SelecionaIcone(img: TImage);
@@ -84,20 +68,20 @@ var
 
 implementation
 
-uses
-  UnitPrincipal;
-
 {$R *.fmx}
+
+uses UnitPrincipal;
 
 procedure TFrmCategoriasCad.SelecionaIcone(img: TImage);
 begin
-    icone_selecionado  := img.Bitmap;  //salvou o icone selecionado
+    //icone_selecionado := img.Bitmap; // Salvei o icone selecionado...
+
     img_selecao.Parent := img.Parent;
 end;
 
 procedure TFrmCategoriasCad.FormResize(Sender: TObject);
 begin
-    lb_icone.Columns := Trunc(lb_icone.Width / 80);
+     lb_icone.Columns := Trunc(lb_icone.Width / 80);
 end;
 
 procedure TFrmCategoriasCad.Image1Click(Sender: TObject);
@@ -107,7 +91,7 @@ end;
 
 procedure TFrmCategoriasCad.img_voltarClick(Sender: TObject);
 begin
-    Close;
+    close;
 end;
 
 end.

@@ -3,50 +3,37 @@ unit UnitLancamentosCad;
 interface
 
 uses
-  FMX.Controls,
-  FMX.Controls.Presentation,
-  FMX.DateTimeCtrls,
-  FMX.Dialogs,
-  FMX.Edit,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Layouts,
-  FMX.Objects,
-  FMX.StdCtrls,
-  FMX.Types,
-
-  System.Classes,
-  System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit,
+  FMX.DateTimeCtrls;
 
 type
   TFrmLancamentosCad = class(TForm)
-    lyt_toolbar: TLayout;
+    Layout1: TLayout;
     Label1: TLabel;
     img_voltar: TImage;
-    img_salvar: TImage;
-    Layout1: TLayout;
+    img_save: TImage;
+    Layout2: TLayout;
     Label2: TLabel;
     edt_login_email: TEdit;
     Line1: TLine;
-    Layout2: TLayout;
-    Label3: TLabel;
-    Line2: TLine;
     Layout3: TLayout;
+    Label3: TLabel;
+    Edit1: TEdit;
+    Line2: TLine;
+    Layout4: TLayout;
     Label4: TLabel;
     Edit2: TEdit;
     Line3: TLine;
-    Layout4: TLayout;
+    Layout5: TLayout;
     Label5: TLabel;
-    Edit3: TEdit;
     Line4: TLine;
-    rect_botton: TRectangle;
-    img_add: TImage;
-    DateEdit1: TDateEdit;
     Image1: TImage;
+    DateEdit1: TDateEdit;
     Image2: TImage;
+    Rectangle1: TRectangle;
+    img_add: TImage;
     procedure img_voltarClick(Sender: TObject);
   private
     { Private declarations }
@@ -59,14 +46,13 @@ var
 
 implementation
 
-uses
-  UnitPrincipal;
-
 {$R *.fmx}
+
+uses UnitPrincipal;
 
 procedure TFrmLancamentosCad.img_voltarClick(Sender: TObject);
 begin
-    Close;
+    close;
 end;
 
 end.

@@ -3,29 +3,14 @@ unit UnitLancamentos;
 interface
 
 uses
-  FMX.Controls,
-  FMX.Controls.Presentation,
-  FMX.Dialogs,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Layouts,
-  FMX.ListView,
-  FMX.ListView.Adapters.Base,
-  FMX.ListView.Appearances,
-  FMX.ListView.Types,
-  FMX.Objects,
-  FMX.StdCtrls,
-  FMX.Types,
-
-  System.Classes,
-  System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.ListView.Types,
+  FMX.ListView.Appearances, FMX.ListView.Adapters.Base, FMX.ListView;
 
 type
   TFrmLancamentos = class(TForm)
-    lyt_toolbar: TLayout;
+    Layout1: TLayout;
     Label1: TLabel;
     img_voltar: TImage;
     Layout2: TLayout;
@@ -33,18 +18,15 @@ type
     Image2: TImage;
     Image3: TImage;
     lbl_mes: TLabel;
-    rect_botton: TRectangle;
-    img_add: TImage;
+    Rectangle1: TRectangle;
     Layout3: TLayout;
-    Layout4: TLayout;
-    Label4: TLabel;
     Label5: TLabel;
-    Layout5: TLayout;
+    Label4: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Layout6: TLayout;
     Label6: TLabel;
     Label7: TLabel;
+    img_add: TImage;
     lv_lancamento: TListView;
     procedure img_voltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -54,8 +36,8 @@ type
     procedure lv_lancamentoItemClick(const Sender: TObject;
       const AItem: TListViewItem);
     procedure img_addClick(Sender: TObject);
-    procedure EditarLancamento(id_lancamento: string);
   private
+    procedure EditarLancamento(id_lancamento: string);
     { Private declarations }
   public
     { Public declarations }
@@ -66,17 +48,14 @@ var
 
 implementation
 
-uses
-  UnitLancamentosCad,
-  UnitPrincipal;
-
 {$R *.fmx}
+
+uses UnitPrincipal, UnitLancamentosCad;
 
 procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-{    Action        := TCloseAction.caFree;
-    FrmLancamentos := nil;
-}
+    //Action := TCloseAction.caFree;
+    //FrmLancamentos := nil;  // Estamos destruindo no close do FrmPrincipal
 end;
 
 procedure TFrmLancamentos.FormShow(Sender: TObject);
@@ -89,12 +68,12 @@ begin
     foto.Position := 0;
 
     for x := 1 to 10 do
-        FrmPrincipal.AddLancamento(lv_lancamento,
-                      '00001', 'Compra de Passagem teste 123456 ', 'Transporte',
-                       -45, date, foto);
+        FrmPrincipal.AddLancamento(FrmLancamentos.lv_lancamento,
+                      '00001',
+                      'Compra de Passagem teste 123456',
+                      'Transporte', -45, date, foto);
 
     foto.DisposeOf;
-
 end;
 
 procedure TFrmLancamentos.img_addClick(Sender: TObject);
@@ -104,13 +83,13 @@ end;
 
 procedure TFrmLancamentos.img_voltarClick(Sender: TObject);
 begin
-    Close;
+    close;
 end;
 
-procedure TFrmLancamentos.EditarLancamento(id_lancamento : string);
+procedure TFrmLancamentos.EditarLancamento(id_lancamento: string);
 begin
     if NOT Assigned(FrmLancamentosCad) then
-        Application.CreateForm(TFrmLancamentosCad,FrmLancamentosCad);
+        Application.CreateForm(TFrmLancamentosCad, FrmLancamentosCad);
 
     FrmLancamentosCad.Show;
 end;
@@ -124,7 +103,7 @@ end;
 procedure TFrmLancamentos.lv_lancamentoUpdateObjects(const Sender: TObject;
   const AItem: TListViewItem);
 begin
-    FrmPrincipal.SetupLancamento(AItem,lv_lancamento.Width);
+    FrmPrincipal.SetupLancamento(FrmLancamentos.lv_lancamento, AItem);
 end;
 
 end.
