@@ -3,30 +3,11 @@ unit UnitCategorias;
 interface
 
 uses
-  Data.DB,
-
-  FireDAC.Comp.Client,
-  FireDAC.DApt,
-
-  FMX.Controls,
-  FMX.Controls.Presentation,
-  FMX.Dialogs,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Layouts,
-  FMX.ListView,
-  FMX.ListView.Adapters.Base,
-  FMX.ListView.Appearances,
-  FMX.ListView.Types,
-  FMX.Objects,
-  FMX.StdCtrls,
-  FMX.Types,
-
-  System.Classes,
-  System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts,
+  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
+  FMX.ListView, FireDAC.Comp.Client, FireDAC.DApt, Data.DB;
 
 type
   TFrmCategorias = class(TForm)
@@ -50,8 +31,8 @@ type
     procedure CadCategoria(id_cat: string);
     { Private declarations }
   public
-    procedure ListarCategorias;
     { Public declarations }
+    procedure ListarCategorias;
   end;
 
 var
@@ -65,33 +46,36 @@ uses UnitPrincipal, UnitCategoriasCad, cCategoria, UnitDM;
 
 procedure TFrmCategorias.ListarCategorias;
 var
-    cat   : TCategoria;
-    qry   : TFDQuery;
-    erro  : string;
-    icone : TStream;
+    cat : TCategoria;
+    qry: TFDQuery;
+    erro: string;
+    icone: TStream;
 begin
     try
         lv_categoria.Items.Clear;
 
         cat := TCategoria.Create(dm.conn);
         qry := cat.ListarCategoria(erro);
+
         while NOT qry.Eof do
         begin
-            //Icone
-           if qry.FieldByName('ICONE').AsString <> '' then
-              icone := qry.CreateBlobStream(qry.FieldByName('ICONE'), TBlobStreamMode.bmRead)
-           else
-              icone := nil;
+            // Icone...
+            if qry.FieldByName('ICONE').AsString <> '' then
+                icone := qry.CreateBlobStream(qry.FieldByName('ICONE'), TBlobStreamMode.bmRead)
+            else
+                icone := nil;
 
-           FrmPrincipal.AddCategoria(lv_categoria,
-                                 qry.FieldByName('ID_CATEGORIA').AsString,
-                                 qry.FieldByName('DESCRICAO').AsString,
-                                 icone);
+            FrmPrincipal.AddCategoria(lv_categoria,
+                                      qry.FieldByName('ID_CATEGORIA').AsString,
+                                      qry.FieldByName('DESCRICAO').AsString,
+                                      icone);
 
             if icone <> nil then
                 icone.DisposeOf;
+
             qry.Next;
         end;
+
     finally
         qry.DisposeOf;
         cat.DisposeOf;
@@ -103,16 +87,19 @@ begin
     if NOT Assigned(FrmCategoriasCad) then
         Application.CreateForm(TFrmCategoriasCad, FrmCategoriasCad);
 
+    // INCLUSAO
     if id_cat = '' then
     begin
-        FrmCategoriasCad.id_cat          := 0;
-        FrmCategoriasCad.modo            := 'I';
-        FrmCategoriasCad.lbl_titulo.text := 'Nova Categoria';
+        FrmCategoriasCad.id_cat := 0;
+        FrmCategoriasCad.modo := 'I';
+        FrmCategoriasCad.lbl_titulo.text := 'Nova Categoria'
     end
     else
+
+    // ALTERACAO
     begin
-        FrmCategoriasCad.id_cat          := id_cat.ToInteger;
-        FrmCategoriasCad.modo            := 'A';
+        FrmCategoriasCad.id_cat := id_cat.tointeger;
+        FrmCategoriasCad.modo := 'A';
         FrmCategoriasCad.lbl_titulo.text := 'Editar Categoria';
     end;
 
@@ -126,25 +113,9 @@ begin
 end;
 
 procedure TFrmCategorias.FormShow(Sender: TObject);
-{var
-    foto : TStream;
-    x : integer;}
 begin
- {   foto := TMemoryStream.Create;
-    FrmPrincipal.img_categoria.Bitmap.SaveToStream(foto);
-    foto.Position := 0;
-
-    for x := 1 to 10 do
-        FrmPrincipal.AddCategoria(lv_categoria,
-                                 '00001',
-                                 'Transporte',
-                                 foto);
-
-    foto.DisposeOf;
-}
     ListarCategorias;
 end;
-
 
 procedure TFrmCategorias.img_addClick(Sender: TObject);
 begin

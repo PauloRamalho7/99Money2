@@ -408,7 +408,6 @@
             <Form>FrmLancamentosCad</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-<<<<<<< HEAD
         <DCCReference Include="UnitCategorias.pas">
             <Form>FrmCategorias</Form>
             <FormType>fmx</FormType>
@@ -422,8 +421,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-=======
->>>>>>> parent of 9a441fb... Aula 11
+        <DCCReference Include="Classes\cCategoria.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -536,6 +534,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="DB\banco.db" Configuration="Release" Class="File">
+                    <Platform Name="Android64">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>banco.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Android\Debug\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
                     <Platform Name="Android">
                         <Overwrite>true</Overwrite>
@@ -548,13 +553,6 @@
                 </DeployFile>
                 <DeployFile LocalName="DB\banco.db" Configuration="Debug" Class="File">
                     <Platform Name="Android">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
-                        <RemoteName>banco.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="DB\banco.db" Configuration="Release" Class="File">
-                    <Platform Name="Android64">
                         <RemoteDir>.\assets\internal\</RemoteDir>
                         <RemoteName>banco.db</RemoteName>
                         <Overwrite>true</Overwrite>

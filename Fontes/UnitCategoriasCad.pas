@@ -3,26 +3,10 @@ unit UnitCategoriasCad;
 interface
 
 uses
-  FireDAC.Comp.Client,
-  FireDAC.DApt,
-
-  FMX.Controls,
-  FMX.Controls.Presentation,
-  FMX.Dialogs,
-  FMX.Edit,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Layouts,
-  FMX.ListBox,
-  FMX.Objects,
-  FMX.StdCtrls,
-  FMX.Types,
-
-  System.Classes,
-  System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Variants;
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Objects,
+  FMX.Controls.Presentation, FMX.StdCtrls, FMX.Layouts, FMX.Edit, FMX.ListBox,
+  FireDAC.Comp.Client, FireDAC.DApt;
 
 type
   TFrmCategoriasCad = class(TForm)
@@ -80,7 +64,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    modo   : string;   // Inclusão / Alteração
+    modo : string; // I (Inclusao) ou A (Alteracao)
     id_cat : Integer;
   end;
 
@@ -107,29 +91,27 @@ end;
 
 procedure TFrmCategoriasCad.FormShow(Sender: TObject);
 var
-    cat   : TCategoria;
-    qry   : TFDQuery;
-    erro  : string;
+    cat : TCategoria;
+    qry: TFDQuery;
+    erro: string;
 begin
     if modo = 'A' then
     begin
         try
             cat := TCategoria.Create(dm.conn);
             cat.ID_CATEGORIA := id_cat;
+
             qry := cat.ListarCategoria(erro);
 
             edt_descricao.Text := qry.FieldByName('DESCRICAO').AsString;
 
-            //icone....
+            // Icone....
 
         finally
             qry.DisposeOf;
             cat.DisposeOf;
         end;
-
     end;
-
-
 end;
 
 procedure TFrmCategoriasCad.Image1Click(Sender: TObject);
@@ -139,38 +121,35 @@ end;
 
 procedure TFrmCategoriasCad.img_saveClick(Sender: TObject);
 var
-    cat   : TCategoria;
-    erro  : string;
+    cat : TCategoria;
+    erro: string;
 begin
     try
-        cat              := TCategoria.Create(dm.conn);
-        cat.DESCRICAO    := FrmCategoriasCad.edt_descricao.Text;
-        cat.ICONE        := icone_selecionado;
+        cat := TCategoria.Create(dm.conn);
+        cat.DESCRICAO := edt_descricao.Text;
+        cat.ICONE := icone_selecionado;
 
         if modo = 'I' then
             cat.Inserir(erro)
         else
         begin
             cat.ID_CATEGORIA := id_cat;
-            cat.Alterar(erro)
+            cat.Alterar(erro);
         end;
 
         if erro <> '' then
         begin
-          ShowMessage(erro);
-          Exit;
+            ShowMessage(erro);
+            exit;
         end;
 
         FrmCategorias.ListarCategorias;
-        Close;
+        close;
 
     finally
         cat.DisposeOf;
     end;
-
 end;
-
-
 
 
 procedure TFrmCategoriasCad.img_voltarClick(Sender: TObject);

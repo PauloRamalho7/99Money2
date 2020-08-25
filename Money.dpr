@@ -10,7 +10,8 @@ uses
   UnitLancamentosCad in 'UnitLancamentosCad.pas' {FrmLancamentosCad},
   UnitCategorias in 'UnitCategorias.pas' {FrmCategorias},
   UnitCategoriasCad in 'UnitCategoriasCad.pas' {FrmCategoriasCad},
-  UnitDM in 'UnitDM.pas' {dm: TDataModule};
+  UnitDM in 'UnitDM.pas' {dm: TDataModule},
+  CCategoria in 'Classes\CCategoria.pas';
 
 {$R *.res}
 
