@@ -45,8 +45,8 @@ type
     Image1: TImage;
     DateEdit1: TDateEdit;
     Image2: TImage;
-    Rectangle1: TRectangle;
-    img_add: TImage;
+    rect_delete: TRectangle;
+    img_delete: TImage;
     procedure img_voltarClick(Sender: TObject);
   private
     { Private declarations }

@@ -17,11 +17,13 @@ type
         FID_CATEGORIA: Integer;
         FDESCRICAO: string;
         FICONE: TBitmap;
+        FINDICE_ICONE: Integer;
     public
         constructor Create(conn: TFDConnection);
         property ID_CATEGORIA: Integer Read FID_CATEGORIA Write FID_CATEGORIA;
         property DESCRICAO: string Read FDESCRICAO Write FDESCRICAO;
         property ICONE: TBitmap Read FICONE Write FICONE;
+        property INDICE_ICONE : Integer  read FINDICE_ICONE write FINDICE_ICONE;
 
         function ListarCategoria(out erro: String): TFDQuery;
         function Inserir(out erro: String): Boolean;
@@ -59,10 +61,11 @@ begin
             begin
                 Active := False;
                 SQL.Clear;
-                SQL.Add('INSERT INTO TAB_CATEGORIA(DESCRICAO, ICONE)');
-                SQL.Add('VALUES(:DESCRICAO, :ICONE)');
+                SQL.Add('INSERT INTO TAB_CATEGORIA(DESCRICAO, ICONE, INDICE_ICONE)');
+                SQL.Add('VALUES(:DESCRICAO, :ICONE, :INDICE_ICONE)');
                 ParamByName('DESCRICAO').Value := DESCRICAO;
                 ParamByName('ICONE').Assign(ICONE);
+                ParamByName('INDICE_ICONE').Value := INDICE_ICONE;
                 ExecSQL;
             end;
 
@@ -147,10 +150,13 @@ begin
             begin
                 Active := False;
                 SQL.Clear;
-                SQL.Add('UPDATE TAB_CATEGORIA SET DESCRICAO=:DESCRICAO, ICONE=:ICONE');
+                SQL.Add('UPDATE TAB_CATEGORIA SET DESCRICAO=:DESCRICAO, ICONE=:ICONE, ');
+                SQL.Add('INDICE_ICONE=:INDICE_ICONE');
                 SQL.Add('WHERE ID_CATEGORIA = :ID_CATEGORIA');
                 ParamByName('ID_CATEGORIA').Value := ID_CATEGORIA;
                 ParamByName('DESCRICAO').Value    := DESCRICAO;
+                ParamByName('INDICE_ICONE').Value := INDICE_ICONE;
+
                 ParamByName('ICONE').Assign(ICONE);
                 ExecSQL;
             end;

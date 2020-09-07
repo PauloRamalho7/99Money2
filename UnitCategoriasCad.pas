@@ -69,13 +69,17 @@ type
     Image15: TImage;
     Image16: TImage;
     img_selecao: TImage;
+    rect_delete: TRectangle;
+    img_delete: TImage;
     procedure img_voltarClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure img_saveClick(Sender: TObject);
+    procedure img_deleteClick(Sender: TObject);
   private
     icone_selecionado: TBitmap;
+    indice_selecionado: Integer;
     procedure SelecionaIcone(img: TImage);
     { Private declarations }
   public
@@ -95,8 +99,8 @@ uses UnitPrincipal, cCategoria, UnitDM, UnitCategorias;
 
 procedure TFrmCategoriasCad.SelecionaIcone(img: TImage);
 begin
-    icone_selecionado := img.Bitmap; // Salvei o icone selecionado...
-
+    icone_selecionado  := img.Bitmap; // Salvei o icone selecionado...
+    indice_selecionado := TListBoxItem(img.Parent).Index;
     img_selecao.Parent := img.Parent;
 end;
 
@@ -111,7 +115,13 @@ var
     qry   : TFDQuery;
     erro  : string;
 begin
-    if modo = 'A' then
+    if modo = 'I' then
+    begin
+        edt_descricao.Text :='';
+        SelecionaIcone(Image1);
+        rect_delete.Visible := False;
+    end
+    else
     begin
         try
             cat := TCategoria.Create(dm.conn);
@@ -121,7 +131,8 @@ begin
             edt_descricao.Text := qry.FieldByName('DESCRICAO').AsString;
 
             //icone....
-
+            img_selecao.Parent := lb_icone.ItemByIndex(qry.FieldByName('INDICE_ICONE').AsInteger);
+            rect_delete.Visible := true;
         finally
             qry.DisposeOf;
             cat.DisposeOf;
@@ -137,6 +148,28 @@ begin
     SelecionaIcone(TImage(Sender));
 end;
 
+procedure TFrmCategoriasCad.img_deleteClick(Sender: TObject);
+var
+    cat   : TCategoria;
+    erro  : string;
+begin
+    try
+        cat              := TCategoria.Create(dm.conn);
+        cat.ID_CATEGORIA := id_cat;
+        if not cat.Excluir(erro) then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
+
+        FrmCategorias.ListarCategorias;
+        Close;
+
+    finally
+        cat.DisposeOf;
+    end;
+end;
+
 procedure TFrmCategoriasCad.img_saveClick(Sender: TObject);
 var
     cat   : TCategoria;
@@ -146,6 +179,7 @@ begin
         cat              := TCategoria.Create(dm.conn);
         cat.DESCRICAO    := FrmCategoriasCad.edt_descricao.Text;
         cat.ICONE        := icone_selecionado;
+        cat.INDICE_ICONE := indice_selecionado;
 
         if modo = 'I' then
             cat.Inserir(erro)
