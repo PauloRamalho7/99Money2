@@ -16,7 +16,7 @@ type
     img_voltar: TImage;
     Rectangle1: TRectangle;
     Layout3: TLayout;
-    Label6: TLabel;
+    lbl_qtd: TLabel;
     img_add: TImage;
     lv_categoria: TListView;
     procedure img_voltarClick(Sender: TObject);
@@ -75,6 +75,8 @@ begin
 
             qry.Next;
         end;
+
+        lbl_qtd.Text := lv_categoria.Items.Count.ToString + ' categoria(s)';
 
     finally
         qry.DisposeOf;

@@ -9,6 +9,7 @@ uses
   FMX.Controls,
   FMX.Controls.Presentation,
   FMX.Dialogs,
+  FMX.DialogService,
   FMX.Edit,
   FMX.Forms,
   FMX.Graphics,
@@ -153,21 +154,34 @@ var
     cat   : TCategoria;
     erro  : string;
 begin
-    try
-        cat              := TCategoria.Create(dm.conn);
-        cat.ID_CATEGORIA := id_cat;
-        if not cat.Excluir(erro) then
+   TDialogService.MessageDialog('Confirma exclusão da categoria?',
+                     TMsgDlgType.mtConfirmation,
+                     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
+                     TMsgDlgBtn.mbNo,
+                     0,
+     procedure(const AResult: TModalResult)
+     var
+        erro: string;
+     begin
+        if AResult = mrYes then
         begin
-            ShowMessage(erro);
-            Exit;
+            try
+                cat              := TCategoria.Create(dm.conn);
+                cat.ID_CATEGORIA := id_cat;
+                if not cat.Excluir(erro) then
+                begin
+                    ShowMessage(erro);
+                    Exit;
+                end;
+
+                FrmCategorias.ListarCategorias;
+                Close;
+
+            finally
+                cat.DisposeOf;
+            end;
         end;
-
-        FrmCategorias.ListarCategorias;
-        Close;
-
-    finally
-        cat.DisposeOf;
-    end;
+      end);
 end;
 
 procedure TFrmCategoriasCad.img_saveClick(Sender: TObject);

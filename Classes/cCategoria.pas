@@ -193,9 +193,24 @@ begin
         try
             qry            := TFDQuery.Create(nil);
             qry.Connection := Fconn;
-            // Validar se categoria possui lançamentos
+
+
             with qry do
             begin
+                Active := False;
+                SQL.Clear;
+                SQL.Add('SELECT * FROM TAB_LANCAMENTO');
+                SQL.Add('WHERE ID_CATEGORIA = :ID_CATEGORIA');
+                ParamByName('ID_CATEGORIA').Value := ID_CATEGORIA;
+                Active := True;
+
+                if RecordCount > 0  then
+                begin
+                    Result := False;
+                    erro := 'A Categoria possui lançamentos e não pode ser excluída!';
+                    Exit
+                end;
+
                 Active := False;
                 SQL.Clear;
                 SQL.Add('DELETE FROM TAB_CATEGORIA');
