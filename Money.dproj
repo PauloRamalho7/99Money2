@@ -421,7 +421,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Classes\cCategoria.pas"/>
+        <DCCReference Include="Classes\CCategoria.pas"/>
         <DCCReference Include="Classes\cLancamento.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -540,18 +540,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="DB\banco.db" Configuration="Release" Class="File">
-                    <Platform Name="Android64">
-                        <RemoteDir>.\assets\internal\</RemoteDir>
-                        <RemoteName>banco.db</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Android\Debug\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
-                    <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Android\Debug\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
                     <Platform Name="Android">
                         <Overwrite>true</Overwrite>
@@ -561,6 +549,18 @@
                     <Platform Name="Android">
                         <RemoteDir>.\assets\internal\</RemoteDir>
                         <RemoteName>banco.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="DB\banco.db" Configuration="Release" Class="File">
+                    <Platform Name="Android64">
+                        <RemoteDir>.\assets\internal\</RemoteDir>
+                        <RemoteName>banco.db</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Android\Debug\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
+                    <Platform Name="Android">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

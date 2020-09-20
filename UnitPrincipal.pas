@@ -3,8 +3,13 @@ unit UnitPrincipal;
 interface
 
 uses
+  Data.DB,
+
   UnitCategorias,
   UnitLancamentos,
+
+  FireDAC.Comp.Client,
+  FireDAC.DApt,
 
   FMX.Ani,
   FMX.Controls,
@@ -100,6 +105,9 @@ var
   FrmPrincipal: TFrmPrincipal;
 
 implementation
+
+uses
+    cLancamento, UnitDM;
 
 {$R *.fmx}
 
@@ -239,9 +247,51 @@ end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 var
+//    x : integer;
+
+    Lanc : TLancamento;
+    qry  : TFDQuery;
+    erro : string;
     foto : TStream;
-    x : integer;
+
 begin
+    try
+        lanc := TLancamento.Create(dm.conn);
+        qry  := Lanc.ListarLancamento(10, erro);
+
+        if erro <> '' then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
+
+
+        while NOT qry.Eof do
+        begin
+            if qry.FieldByName('ICONE').AsString <> '' then
+                foto := qry.CreateBlobStream(qry.FieldByName('ICONE'),TBlobStreamMode.bmRead)
+            else
+                foto := nil;
+
+            AddLancamento(FrmPrincipal.lv_lancamento,
+                          qry.FieldByName('ID_LANCAMENTO').AsString,
+                          qry.FieldByName('DESCRICAO').AsString,
+                          qry.FieldByName('DESCRICAO_CATEGORIA').AsString,
+                          qry.FieldByName('VALOR').AsFloat,
+                          qry.FieldByName('DATA').AsDateTime,
+                          foto
+                          );
+
+            qry.Next;
+
+            foto.DisposeOf;
+        end;
+
+    finally
+        Lanc.DisposeOf;
+    end;
+
+  {
     foto := TMemoryStream.Create;
     img_categoria.Bitmap.SaveToStream(foto);
     foto.Position := 0;
@@ -252,7 +302,7 @@ begin
                       'Compra de Passagem teste 123456 aaaaa bbbbb cccccc ddddddddd',
                       'Transporte', -45, date, foto);
 
-    foto.DisposeOf;
+    foto.DisposeOf; }
 end;
 
 procedure TFrmPrincipal.img_fechar_menuClick(Sender: TObject);

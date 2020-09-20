@@ -115,6 +115,7 @@ var
     cat   : TCategoria;
     qry   : TFDQuery;
     erro  : string;
+//    img   : TImage;
 begin
     if modo = 'I' then
     begin
@@ -134,6 +135,10 @@ begin
             //icone....
             img_selecao.Parent := lb_icone.ItemByIndex(qry.FieldByName('INDICE_ICONE').AsInteger);
             rect_delete.Visible := true;
+
+//            img :=FrmCategoriasCad.FindComponent('Image'+IntToStr(qry.FieldByName('INDICE_ICONE').AsInteger+1)) as TImage
+
+            SelecionaIcone(FrmCategoriasCad.FindComponent('Image'+IntToStr(qry.FieldByName('INDICE_ICONE').AsInteger+1)) as TImage);
         finally
             qry.DisposeOf;
             cat.DisposeOf;

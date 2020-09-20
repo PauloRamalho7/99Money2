@@ -19,15 +19,19 @@ type
     FID_CATEGORIA: Integer;
     FDATA: TDateTime;
     FID_LANCAMENTO: Integer;
+    FDATA_ATE: String;
+    FDATA_DE: String;
     public
         constructor Create(conn: TFDConnection);
         property ID_LANCAMENTO: Integer Read FID_LANCAMENTO Write FID_LANCAMENTO;
         property ID_CATEGORIA: Integer Read FID_CATEGORIA Write FID_CATEGORIA;
         property VALOR : Double read FVALOR write FVALOR;
         property DATA : TDateTime read FDATA write FDATA;
+        property DATA_DE  : String read FDATA_DE write FDATA_DE;
+        property DATA_ATE : String read FDATA_ATE write FDATA_ATE;
         property DESCRICAO: string Read FDESCRICAO Write FDESCRICAO;
 
-        function ListarLancamento(out erro: String): TFDQuery;
+        function ListarLancamento(qtd_result : Integer; out erro: String): TFDQuery;
         function Inserir(out erro: String): Boolean;
         function Alterar(out erro: String): Boolean;
         function Excluir(out erro: String): Boolean;
@@ -95,7 +99,8 @@ begin
 
 end;
 
-function TLancamento.ListarLancamento(out erro: String): TFDQuery;
+function TLancamento.ListarLancamento(qtd_result : Integer;
+                                      out erro: String): TFDQuery;
 var
     qry : TFDQuery;
 begin
@@ -112,11 +117,21 @@ begin
             SQL.Add('JOIN TAB_CATEGORIA C ON (C.ID_CATEGORIA = L.ID_CATEGORIA)');
             SQL.Add('WHERE 1 = 1');
 
-            if ID_LANCAMENTO > 0  then
+            if ID_CATEGORIA > 0  then
             begin
-                SQL.Add('AND ID_LANCAMENTO = :ID_LANCAMENTO');
-                ParamByName('ID_LANCAMENTO').Value := ID_LANCAMENTO;
+                SQL.Add('AND L.ID_CATEGORIA = :ID_CATEGORIA');
+                ParamByName('ID_CATEGORIA').Value := ID_CATEGORIA;
             end;
+
+            if (DATA_DE <> '') and (DATA_ATE <> '') then
+            begin
+                SQL.Add('AND L.DATA BETWEEN ''' + DATA_DE + ''' AND ''' + DATA_ATE + '''');
+            end;
+
+            SQL.Add('ORDER BY L.DATA');
+
+            if qtd_result > 0 then
+                SQL.Add('LIMIT ' + qtd_result.ToString);
 
             Active := True;
         end;

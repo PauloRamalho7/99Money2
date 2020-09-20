@@ -3,6 +3,11 @@ unit UnitLancamentos;
 interface
 
 uses
+
+  Data.DB,
+  FireDAC.Comp.Client,
+  FireDAC.DApt,
+
   FMX.Controls,
   FMX.Controls.Presentation,
   FMX.Dialogs,
@@ -65,7 +70,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnitPrincipal, UnitLancamentosCad;
+uses UnitPrincipal, UnitLancamentosCad, cLancamento, UnitDM;
 
 procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -75,20 +80,49 @@ end;
 
 procedure TFrmLancamentos.FormShow(Sender: TObject);
 var
+//    x : integer;
+
+    Lanc : TLancamento;
+    qry  : TFDQuery;
+    erro : string;
     foto : TStream;
-    x : integer;
+
 begin
-    foto := TMemoryStream.Create;
-    FrmPrincipal.img_categoria.Bitmap.SaveToStream(foto);
-    foto.Position := 0;
+    try
+        lanc := TLancamento.Create(dm.conn);
+        qry  := Lanc.ListarLancamento(0, erro);
 
-    for x := 1 to 10 do
-        FrmPrincipal.AddLancamento(FrmLancamentos.lv_lancamento,
-                      '00001',
-                      'Compra de Passagem teste 123456',
-                      'Transporte', -45, date, foto);
+        if erro <> '' then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
 
-    foto.DisposeOf;
+
+        while NOT qry.Eof do
+        begin
+            if qry.FieldByName('ICONE').AsString <> '' then
+                foto := qry.CreateBlobStream(qry.FieldByName('ICONE'),TBlobStreamMode.bmRead)
+            else
+                foto := nil;
+
+            FrmPrincipal.AddLancamento(FrmPrincipal.lv_lancamento,
+                          qry.FieldByName('ID_LANCAMENTO').AsString,
+                          qry.FieldByName('DESCRICAO').AsString,
+                          qry.FieldByName('DESCRICAO_CATEGORIA').AsString,
+                          qry.FieldByName('VALOR').AsFloat,
+                          qry.FieldByName('DATA').AsDateTime,
+                          foto
+                          );
+
+            qry.Next;
+
+            foto.DisposeOf;
+        end;
+
+    finally
+        Lanc.DisposeOf;
+    end;
 end;
 
 procedure TFrmLancamentos.img_addClick(Sender: TObject);
