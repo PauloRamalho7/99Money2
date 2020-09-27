@@ -53,7 +53,7 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Rectangle1: TRectangle;
-    Image4: TImage;
+    img_add: TImage;
     Rectangle2: TRectangle;
     Layout7: TLayout;
     Label8: TLabel;
@@ -85,6 +85,7 @@ type
     procedure AnimationMenuProcess(Sender: TObject);
     procedure img_fechar_menuClick(Sender: TObject);
     procedure layout_menu_catClick(Sender: TObject);
+    procedure img_addClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -107,7 +108,7 @@ var
 implementation
 
 uses
-    cLancamento, UnitDM;
+    cLancamento, UnitDM, UnitLancamentosCad;
 
 {$R *.fmx}
 
@@ -303,6 +304,17 @@ begin
                       'Transporte', -45, date, foto);
 
     foto.DisposeOf; }
+end;
+
+procedure TFrmPrincipal.img_addClick(Sender: TObject);
+begin
+    if NOT Assigned(FrmLancamentosCad) then
+        Application.CreateForm(TFrmLancamentosCad, FrmLancamentosCad);
+
+    FrmLancamentosCad.modo    := 'I';
+    FrmLancamentosCad.id_lanc := 0;
+    FrmLancamentosCad.Show;
+
 end;
 
 procedure TFrmPrincipal.img_fechar_menuClick(Sender: TObject);

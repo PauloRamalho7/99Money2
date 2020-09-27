@@ -117,6 +117,12 @@ begin
             SQL.Add('JOIN TAB_CATEGORIA C ON (C.ID_CATEGORIA = L.ID_CATEGORIA)');
             SQL.Add('WHERE 1 = 1');
 
+            if ID_LANCAMENTO > 0  then
+            begin
+                SQL.Add('AND L.ID_LANCAMENTO = :ID_LANCAMENTO');
+                ParamByName('ID_LANCAMENTO').Value := ID_LANCAMENTO;
+            end;
+
             if ID_CATEGORIA > 0  then
             begin
                 SQL.Add('AND L.ID_CATEGORIA = :ID_CATEGORIA');
