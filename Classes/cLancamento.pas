@@ -78,7 +78,7 @@ begin
                 SQL.Add('VALUES(:ID_CATEGORIA, :VALOR, :DATA, :DESCRICAO)');
                 ParamByName('ID_CATEGORIA').Value := ID_CATEGORIA;
                 ParamByName('VALOR').Value        := VALOR;
-                ParamByName('DATA').Value         := DATA;
+                ParamByName('DATA').Value         := FDATA;
                 ParamByName('DESCRICAO').Value    := DESCRICAO;
                 ExecSQL;
             end;
@@ -134,7 +134,7 @@ begin
                 SQL.Add('AND L.DATA BETWEEN ''' + DATA_DE + ''' AND ''' + DATA_ATE + '''');
             end;
 
-            SQL.Add('ORDER BY L.DATA');
+            SQL.Add('ORDER BY L.DATA DESC, L.ID_LANCAMENTO DESC');
 
             if qtd_result > 0 then
                 SQL.Add('LIMIT ' + qtd_result.ToString);
@@ -190,14 +190,25 @@ begin
             begin
                 Active := False;
                 SQL.Clear;
+{
                 SQL.Add('UPDATE TAB_LANCAMENTO SET ID_CATEGORIA=:ID_CATEGORIA, VALOR=:VALOR, ');
-                SQL.Add('DATA=:DATA, DESCRICAO=:DESCRICAO)');
-                SQL.Add('WHERE ID_LANCAMENTO = :ID_LANCMENTO');
+                SQL.Add('DATA=:DATA, DESCRICAO=:DESCRICAO ');
+                SQL.Add('WHERE ID_LANCAMENTO = :ID_LANCAMENTO');
+                ParamByName('ID_LANCAMENTO').Value := ID_LANCAMENTO;
+                ParamByName('ID_CATEGORIA').Value := ID_CATEGORIA;
+                ParamByName('VALOR').Value := VALOR;
+                ParamByName('DATA').Value := FDATA;
+                ParamByName('DESCRICAO').Value := DESCRICAO;
+
+}
+                SQL.Add('UPDATE TAB_LANCAMENTO SET ID_CATEGORIA=:ID_CATEGORIA, VALOR=:VALOR, ');
+                SQL.Add('DATA=:DATA, DESCRICAO=:DESCRICAO ');
+                SQL.Add('WHERE ID_LANCAMENTO = :ID_LANCAMENTO');
 
                 ParamByName('ID_LANCAMENTO').Value := ID_LANCAMENTO;
                 ParamByName('ID_CATEGORIA').Value  := ID_CATEGORIA;
                 ParamByName('VALOR').Value         := VALOR;
-                ParamByName('DATA').Value          := DATA;
+                ParamByName('DATA').Value          := FDATA;
                 ParamByName('DESCRICAO').Value     := DESCRICAO;
                 ExecSQL;
             end;

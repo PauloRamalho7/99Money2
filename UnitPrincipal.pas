@@ -87,6 +87,7 @@ type
     procedure layout_menu_catClick(Sender: TObject);
     procedure img_addClick(Sender: TObject);
   private
+    procedure ListarUltLanc;
     { Private declarations }
   public
     { Public declarations }
@@ -246,17 +247,16 @@ begin
     rect_menu.Visible := true;
 end;
 
-procedure TFrmPrincipal.FormShow(Sender: TObject);
+procedure TFrmPrincipal.ListarUltLanc;
 var
-//    x : integer;
-
     Lanc : TLancamento;
     qry  : TFDQuery;
     erro : string;
     foto : TStream;
 
 begin
-    try
+    try FrmPrincipal.lv_lancamento.Items.Clear;
+
         lanc := TLancamento.Create(dm.conn);
         qry  := Lanc.ListarLancamento(10, erro);
 
@@ -292,6 +292,13 @@ begin
         Lanc.DisposeOf;
     end;
 
+end;
+
+procedure TFrmPrincipal.FormShow(Sender: TObject);
+//    x : integer;
+
+begin
+    ListarUltLanc;
   {
     foto := TMemoryStream.Create;
     img_categoria.Bitmap.SaveToStream(foto);
@@ -313,7 +320,10 @@ begin
 
     FrmLancamentosCad.modo    := 'I';
     FrmLancamentosCad.id_lanc := 0;
-    FrmLancamentosCad.Show;
+    FrmLancamentosCad.ShowModal(procedure (ModalResult: TModalResult)
+        begin
+            ListarUltLanc;
+        end);
 
 end;
 
@@ -349,6 +359,18 @@ procedure TFrmPrincipal.lv_lancamentoItemClick(const Sender: TObject;
   const AItem: TListViewItem);
 begin
     //showmessage(Aitem.TagString);
+    if NOT Assigned(FrmLancamentosCad) then
+        Application.CreateForm(TFrmLancamentosCad, FrmLancamentosCad);
+
+    FrmLancamentosCad.modo    := 'A';
+    FrmLancamentosCad.id_lanc := AItem.TagString.ToInteger;
+
+
+    FrmLancamentosCad.ShowModal(procedure(ModalResult: TModalResult)
+        begin
+            ListarUltLanc;
+        end);
+
 end;
 
 procedure TFrmPrincipal.lv_lancamentoItemClickEx(const Sender: TObject;

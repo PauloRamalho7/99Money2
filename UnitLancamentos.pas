@@ -231,7 +231,10 @@ begin
     end;
 
 
-    FrmLancamentosCad.Show;
+    FrmLancamentosCad.ShowModal(procedure(ModalResult: TModalResult)
+        begin
+            ListarLancamentos;
+        end);
 end;
 
 procedure TFrmLancamentos.lv_lancamentoItemClick(const Sender: TObject;

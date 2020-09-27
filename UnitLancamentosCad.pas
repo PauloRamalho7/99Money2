@@ -17,12 +17,15 @@ uses
   FMX.Objects,
   FMX.StdCtrls,
   FMX.Types,
+  FMX.ListBox,
 
   System.Classes,
   System.SysUtils,
   System.Types,
   System.UITypes,
-  System.Variants, FMX.ListBox;
+  System.Variants,
+
+  uFormat;
 
 type
   TFrmLancamentosCad = class(TForm)
@@ -57,6 +60,8 @@ type
     procedure img_hojeClick(Sender: TObject);
     procedure img_ontemClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure img_saveClick(Sender: TObject);
+    procedure edt_valorTyping(Sender: TObject);
   private
     procedure ComboCategoria;
     { Private declarations }
@@ -77,6 +82,7 @@ implementation
 uses UnitPrincipal, CCategoria, UnitDM, cLancamento;
 
 procedure TFrmLancamentosCad.ComboCategoria;
+//TODO: Mudar comboBox
 var
     c : TCategoria;
     erro : string;
@@ -105,6 +111,11 @@ begin
         qry.DisposeOf;
         c.DisposeOf;
     end;
+end;
+
+procedure TFrmLancamentosCad.edt_valorTyping(Sender: TObject);
+begin
+    Formatar(edt_valor, TFormato.Valor);
 end;
 
 procedure TFrmLancamentosCad.FormShow(Sender: TObject);
@@ -168,6 +179,55 @@ end;
 procedure TFrmLancamentosCad.img_ontemClick(Sender: TObject);
 begin
     dt_lanc.Date := Date-1;
+end;
+
+function TrataValor(Str: string): Double;
+begin
+    // Recebe = 1.250,75
+    str := StringReplace(str, '.', '', [rfReplaceAll]); // 1250,75
+    str := StringReplace(str, ',', '', [rfReplaceAll]); // 125075
+
+    try
+        Result := StrToFloat(str) / 100;
+    except
+        Result := 0;
+    end;
+end;
+
+procedure TFrmLancamentosCad.img_saveClick(Sender: TObject);
+var
+    Lanc : TLancamento;
+    erro : string;
+begin
+    try
+        Lanc               := TLancamento.Create(dm.conn);
+        Lanc.DESCRICAO     := edt_descricao.Text;
+        Lanc.VALOR         := TrataValor(edt_valor.Text) * img_tipo_lanc.Tag;
+        Lanc.ID_CATEGORIA  := Integer(cmb_categoria.Items.Objects[cmb_categoria.ItemIndex]);
+        Lanc.DATA          := dt_lanc.Date;
+
+        if modo='I' then
+        begin
+            Lanc.Inserir(erro);
+        end
+        else
+        begin
+            Lanc.ID_LANCAMENTO := id_lanc;
+            Lanc.Alterar(erro);
+        end;
+
+        if erro <> '' then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
+
+        Close;
+
+    finally
+        Lanc.DisposeOf;
+    end;
+
 end;
 
 procedure TFrmLancamentosCad.img_tipo_lancClick(Sender: TObject);
