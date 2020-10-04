@@ -10,6 +10,7 @@ uses
   FMX.Controls.Presentation,
   FMX.DateTimeCtrls,
   FMX.Dialogs,
+  FMX.DialogService,
   FMX.Edit,
   FMX.Forms,
   FMX.Graphics,
@@ -62,6 +63,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure img_saveClick(Sender: TObject);
     procedure edt_valorTyping(Sender: TObject);
+    procedure img_deleteClick(Sender: TObject);
   private
     procedure ComboCategoria;
     { Private declarations }
@@ -79,7 +81,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnitPrincipal, CCategoria, UnitDM, cLancamento;
+uses UnitPrincipal, CCategoria, UnitDM, cLancamento, UnitLancamentos;
 
 procedure TFrmLancamentosCad.ComboCategoria;
 //TODO: Mudar comboBox
@@ -169,6 +171,41 @@ begin
             qry.DisposeOf;
         end;
     end;
+end;
+
+procedure TFrmLancamentosCad.img_deleteClick(Sender: TObject);
+var
+    lanc   : TLancamento;
+    erro  : string;
+begin
+   TDialogService.MessageDialog('Confirma exclusão do lançamento?',
+                     TMsgDlgType.mtConfirmation,
+                     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
+                     TMsgDlgBtn.mbNo,
+                     0,
+     procedure(const AResult: TModalResult)
+     var
+        erro: string;
+     begin
+        if AResult = mrYes then
+        begin
+            try
+                Lanc              := TLancamento.Create(dm.conn);
+                Lanc.ID_LANCAMENTO := id_lanc;
+                if not lanc.Excluir(erro) then
+                begin
+                    ShowMessage(erro);
+                    Exit;
+                end;
+
+                Close;
+
+            finally
+                Lanc.DisposeOf;
+            end;
+        end;
+      end);
+
 end;
 
 procedure TFrmLancamentosCad.img_hojeClick(Sender: TObject);

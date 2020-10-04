@@ -11,7 +11,10 @@ uses
   UnitCategorias in 'UnitCategorias.pas' {FrmCategorias},
   UnitCategoriasCad in 'UnitCategoriasCad.pas' {FrmCategoriasCad},
   UnitDM in 'UnitDM.pas' {dm: TDataModule},
-  CCategoria in 'Classes\CCategoria.pas';
+  cCategoria in 'Classes\cCategoria.pas',
+  cLancamento in 'Classes\cLancamento.pas',
+  uFormat in 'Units\uFormat.pas',
+  cUsuario in 'Classes\cUsuario.pas';
 
 {$R *.res}
 

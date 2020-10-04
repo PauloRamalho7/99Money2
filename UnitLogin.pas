@@ -3,6 +3,9 @@ unit UnitLogin;
 interface
 
 uses
+  FireDAC.Comp.Client,
+  FireDAC.DApt,
+
   u99Permissions,
 
   FMX.ActnList,
@@ -66,7 +69,7 @@ type
     Layout10: TLayout;
     c_foto_editar: TCircle;
     Layout11: TLayout;
-    RoundRect8: TRoundRect;
+    Rect_criar_conta: TRoundRect;
     Label3: TLabel;
     TabEscolher: TTabItem;
     Layout12: TLayout;
@@ -94,6 +97,7 @@ type
     Layout18: TLayout;
     ActLibrary: TTakePhotoFromLibraryAction;
     ActCamera: TTakePhotoFromCameraAction;
+    Timer: TTimer;
     procedure lbl_login_contaClick(Sender: TObject);
     procedure lbl_conta_loginClick(Sender: TObject);
     procedure rect_conta_proximoClick(Sender: TObject);
@@ -111,6 +115,8 @@ type
       Shift: TShiftState);
     procedure rect_loginClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Rect_criar_contaClick(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
   private
     { Private declarations }
     permissao: T99Permissions;
@@ -126,7 +132,7 @@ implementation
 
 {$R *.fmx}
 
-uses UnitPrincipal;
+uses UnitPrincipal, cUsuario, UnitDM;
 
 procedure TFrmLogin.ActCameraDidFinishTaking(Image: TBitmap);
 begin
@@ -207,6 +213,40 @@ end;
 procedure TFrmLogin.FormShow(Sender: TObject);
 begin
     TabControl1.ActiveTab := TabLogin;
+    Timer.Enabled         := True;
+end;
+
+procedure TFrmLogin.TimerTimer(Sender: TObject);
+var
+    u : TUsuario;
+    erro: string;
+    qry: TFDQuery;
+begin
+    Timer.Enabled := false;
+    // TODO : Criar Metodo Login
+
+    // Valida se usuario ja está logado...
+    try
+        u := TUsuario.Create(dm.conn);
+        qry := TFDQuery.Create(nil);
+
+        qry := u.ListarUsuario(erro);
+
+        if qry.FieldByName('IND_LOGIN').AsString <> 'S' then
+            exit;
+
+    finally
+        qry.DisposeOf;
+        u.DisposeOf;
+    end;
+
+    if NOT Assigned(FrmPrincipal) then
+        Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+
+    Application.MainForm := FrmPrincipal;
+    FrmPrincipal.Show;
+    FrmLogin.Close;
+
 end;
 
 procedure TFrmLogin.TrataErroPermissao(Sender: TObject);
@@ -249,8 +289,66 @@ begin
     ActFoto.Execute;
 end;
 
-procedure TFrmLogin.rect_loginClick(Sender: TObject);
+procedure TFrmLogin.Rect_criar_contaClick(Sender: TObject);
+var
+    u    : TUsuario;
+    erro : string;
 begin
+    try
+        u           := TUsuario.Create(dm.conn);
+        u.NOME      := edt_cad_nome.Text;
+        u.EMAIL     := edt_cad_email.Text;
+        u.SENHA     := edt_cad_senha.Text;
+        u.IND_LOGIN := 'S';
+        u.FOTO      := c_foto_editar.Fill.Bitmap.Bitmap;
+
+
+        if NOT u.Excluir(erro) then
+        begin
+            ShowMessage('Erro ao incluir usuário: '+erro);
+            Exit;
+        end;
+
+        if NOT u.Inserir(erro) then
+        begin
+            ShowMessage('Erro ao incluir usuário: '+erro);
+            Exit;
+        end;
+    finally
+        u.DisposeOf;
+    end;
+
+    if NOT Assigned(FrmPrincipal) then
+        Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+
+    Application.MainForm := FrmPrincipal;
+    FrmPrincipal.Show;
+    FrmLogin.Close;
+
+end;
+
+procedure TFrmLogin.rect_loginClick(Sender: TObject);
+var
+    u    : TUsuario;
+    erro : string;
+begin
+    try
+        u       := TUsuario.Create(dm.conn);
+        u.EMAIL := edt_login_email.Text;
+        u.SENHA := edt_login_senha.Text;
+
+
+        if NOT u.ValidarLogin(erro)  then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
+
+
+    finally
+        u.DisposeOf;
+    end;
+
     if NOT Assigned(FrmPrincipal) then
         Application.CreateForm(TFrmPrincipal, FrmPrincipal);
 
