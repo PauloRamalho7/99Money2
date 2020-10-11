@@ -48,7 +48,7 @@ type
     Layout4: TLayout;
     rect_login: TRoundRect;
     Label1: TLabel;
-    TabControl1: TTabControl;
+    TabControl: TTabControl;
     TabLogin: TTabItem;
     TabConta: TTabItem;
     Layout5: TLayout;
@@ -117,6 +117,10 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Rect_criar_contaClick(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
+    procedure FormVirtualKeyboardShown(Sender: TObject;
+      KeyboardVisible: Boolean; const Bounds: TRect);
+    procedure FormVirtualKeyboardHidden(Sender: TObject;
+      KeyboardVisible: Boolean; const Bounds: TRect);
   private
     { Private declarations }
     permissao: T99Permissions;
@@ -191,17 +195,17 @@ begin
         begin
             // Botao back pressionado e teclado NAO visivel...
 
-            if TabControl1.ActiveTab = TabConta then
+            if TabControl.ActiveTab = TabConta then
             begin
                 Key := 0;
                 ActLogin.Execute
             end
-            else if TabControl1.ActiveTab = TabFoto then
+            else if TabControl.ActiveTab = TabFoto then
             begin
                 Key := 0;
                 ActConta.Execute
             end
-            else if TabControl1.ActiveTab = TabEscolher then
+            else if TabControl.ActiveTab = TabEscolher then
             begin
                 Key := 0;
                 ActFoto.Execute;
@@ -212,8 +216,20 @@ begin
 end;
 procedure TFrmLogin.FormShow(Sender: TObject);
 begin
-    TabControl1.ActiveTab := TabLogin;
+    TabControl.ActiveTab := TabLogin;
     Timer.Enabled         := True;
+end;
+
+procedure TFrmLogin.FormVirtualKeyboardHidden(Sender: TObject;
+  KeyboardVisible: Boolean; const Bounds: TRect);
+begin
+    TabControl.Margins.Bottom := 0;
+end;
+
+procedure TFrmLogin.FormVirtualKeyboardShown(Sender: TObject;
+  KeyboardVisible: Boolean; const Bounds: TRect);
+begin
+    TabControl.Margins.Bottom := 150;
 end;
 
 procedure TFrmLogin.TimerTimer(Sender: TObject);
