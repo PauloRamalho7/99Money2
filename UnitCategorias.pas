@@ -38,6 +38,7 @@ type
     lbl_qtd: TLabel;
     img_add: TImage;
     lv_categoria: TListView;
+    img_resumo: TImage;
     procedure img_voltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);

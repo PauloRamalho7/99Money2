@@ -230,7 +230,6 @@ begin
 
         if qry.FieldByName('IND_LOGIN').AsString <> 'S' then
             exit;
-
     finally
         qry.DisposeOf;
         u.DisposeOf;

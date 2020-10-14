@@ -3,13 +3,10 @@ unit UnitPrincipal;
 interface
 
 uses
-  Data.DB,
-
   UnitCategorias,
   UnitLancamentos,
 
-  FireDAC.Comp.Client,
-  FireDAC.DApt,
+  Data.DB,
 
   FMX.Ani,
   FMX.Controls,
@@ -26,7 +23,11 @@ uses
   FMX.StdCtrls,
   FMX.Types,
 
+  FireDAC.Comp.Client,
+  FireDAC.DApt,
+
   System.Classes,
+  System.DateUtils,
   System.SysUtils,
   System.Types,
   System.UITypes,
@@ -36,21 +37,21 @@ type
   TFrmPrincipal = class(TForm)
     Layout1: TLayout;
     img_menu: TImage;
-    Circle1: TCircle;
-    Image1: TImage;
+    c_icone: TCircle;
+    img_notificacao: TImage;
     Label1: TLabel;
     Layout2: TLayout;
-    Label2: TLabel;
+    lbl_saldo: TLabel;
     Label3: TLabel;
     Layout3: TLayout;
     Layout4: TLayout;
     Layout5: TLayout;
     Image2: TImage;
-    Label4: TLabel;
+    lbl_receitas: TLabel;
     Label5: TLabel;
     Layout6: TLayout;
     Image3: TImage;
-    Label6: TLabel;
+    lbl_despesas: TLabel;
     Label7: TLabel;
     Rectangle1: TRectangle;
     img_add: TImage;
@@ -91,6 +92,8 @@ type
     procedure layout_menu_logoffClick(Sender: TObject);
   private
     procedure ListarUltLanc;
+    procedure MontaPainel;
+    procedure CarregaIcone;
     { Private declarations }
   public
     { Public declarations }
@@ -156,8 +159,6 @@ begin
     end;
 end;
 
-
-
 procedure TFrmPrincipal.AnimationMenuFinish(Sender: TObject);
 begin
     layout_principal.Enabled := AnimationMenu.Inverse;
@@ -188,7 +189,6 @@ begin
     end;
     }
 end;
-
 
 procedure TFrmPrincipal.AddCategoria(listview: TListView;
                                       id_categoria,
@@ -221,7 +221,6 @@ begin
     end;
 end;
 
-
 procedure TFrmPrincipal.SetupCategoria(lv: TListView;
                                        Item: TListViewItem);
 var
@@ -231,9 +230,7 @@ begin
     txt.Width := lv.Width - txt.PlaceOffset.X - 20;
 end;
 
-
 //***************************************************
-
 procedure TFrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
     if Assigned(FrmLancamentos) then
@@ -244,6 +241,77 @@ begin
 
     Action := TCloseAction.caFree;
     FrmPrincipal := nil;
+end;
+
+procedure TFrmPrincipal.MontaPainel;
+var
+    lanc : TLancamento;
+    qry  : TFDQuery;
+    erro : string;
+    vl_receita,
+    vl_despesa : Double;
+begin
+    try
+        Lanc          := TLancamento.Create(dm.conn);
+        Lanc.DATA_DE  := FormatDateTime('YYYY-MM-DD', StartOfTheMonth(Date));
+        Lanc.DATA_ATE := FormatDateTime('YYYY-MM-DD', EndOfTheMonth(Date));
+        qry := lanc.ListarLancamento(0, erro);
+        if erro <>'' then
+        begin
+            ShowMessage(erro);
+            Exit;
+        end;
+
+        vl_receita := 0;
+        vl_despesa := 0;
+
+        while NOT qry.Eof do
+        begin
+           if qry.FieldByName('VALOR').AsFloat > 0 then
+                vl_receita  := vl_receita + qry.FieldByName('VALOR').AsFloat
+            else
+                vl_despesa := vl_despesa + qry.FieldByName('VALOR').AsFloat;
+
+            qry.Next;
+        end;
+
+        lbl_receitas.Text := 'R$ ' + Formatfloat('#,##0.00',vl_receita);
+        lbl_despesas.Text := 'R$ ' + Formatfloat('#,##0.00',vl_despesa);
+        lbl_saldo.Text    := 'R$ ' + Formatfloat('#,##0.00',vl_receita+vl_despesa);  // Somamos pq o vl_desp já esta negativo...
+
+    finally
+        qry.DisposeOf;
+        lanc.DisposeOf;
+    end;
+
+end;
+
+procedure TFrmPrincipal.CarregaIcone;
+var
+    u : TUsuario;
+    qry: TFDQuery;
+    erro: string;
+    foto: TStream;
+begin
+    try
+        u := TUsuario.Create(dm.conn);
+        qry := u.ListarUsuario(erro);
+
+        if qry.FieldByName('FOTO').AsString <> '' then
+            foto := qry.CreateBlobStream(qry.FieldByName('FOTO'), TBlobStreamMode.bmRead)
+        else
+            foto := nil;
+
+        if foto <> nil then
+        begin
+            c_icone.Fill.Bitmap.Bitmap.LoadFromStream(foto);
+            foto.DisposeOf;
+        end;
+
+    finally
+        qry.DisposeOf;
+        u.DisposeOf;
+    end;
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
@@ -298,6 +366,8 @@ begin
         Lanc.DisposeOf;
     end;
 
+    MontaPainel;
+
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
@@ -305,6 +375,7 @@ procedure TFrmPrincipal.FormShow(Sender: TObject);
 
 begin
     ListarUltLanc;
+    CarregaIcone;
   {
     foto := TMemoryStream.Create;
     img_categoria.Bitmap.SaveToStream(foto);

@@ -29,6 +29,7 @@ type
     Label7: TLabel;
     img_add: TImage;
     lv_lancamento: TListView;
+    img_resumo: TImage;
     procedure img_voltarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -39,6 +40,7 @@ type
     procedure img_addClick(Sender: TObject);
     procedure img_proximoClick(Sender: TObject);
     procedure img_anteriorClick(Sender: TObject);
+    procedure img_resumoClick(Sender: TObject);
   private
     dt_filtro : TDate;
     procedure AbrirLancamento(id_lancamento: string);
@@ -57,7 +59,8 @@ implementation
 
 {$R *.fmx}
 
-uses UnitPrincipal, UnitLancamentosCad, cLancamento, UnitDM;
+uses UnitPrincipal, UnitLancamentosCad, cLancamento, UnitDM,
+  UnitLancamentosResumo;
 
 procedure TFrmLancamentos.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -172,6 +175,16 @@ end;
 procedure TFrmLancamentos.img_proximoClick(Sender: TObject);
 begin
     NavegarMes(1);
+end;
+
+procedure TFrmLancamentos.img_resumoClick(Sender: TObject);
+begin
+    if NOT Assigned(FrmLancamentosResumo) then
+        Application.CreateForm(TFrmLancamentosResumo, FrmLancamentosResumo);
+
+    FrmLancamentosResumo.lbl_mes.Text := FrmLancamentos.lbl_mes.Text;
+    FrmLancamentosResumo.dt_filtro := FrmLancamentos.dt_filtro;
+    FrmLancamentosResumo.Show;
 end;
 
 procedure TFrmLancamentos.img_voltarClick(Sender: TObject);

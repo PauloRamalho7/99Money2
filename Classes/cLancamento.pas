@@ -32,6 +32,7 @@ type
         property DESCRICAO: string Read FDESCRICAO Write FDESCRICAO;
 
         function ListarLancamento(qtd_result : Integer; out erro: String): TFDQuery;
+        function ListarResumo(out erro: string): TFDQuery;
         function Inserir(out erro: String): Boolean;
         function Alterar(out erro: String): Boolean;
         function Excluir(out erro: String): Boolean;
@@ -271,5 +272,38 @@ begin
     end;
 
 end;
+
+function TLancamento.ListarResumo(out erro: string): TFDQuery;
+var
+    qry : TFDQuery;
+begin
+    try
+        qry := TFDQuery.Create(nil);
+        qry.Connection := Fconn;
+
+        with qry do
+        begin
+            Active := false;
+            sql.Clear;
+            sql.Add('SELECT C.ICONE, C.DESCRICAO, SUM(L.VALOR) AS VALOR');
+            sql.Add('FROM    TAB_LANCAMENTO L');
+            sql.Add('JOIN TAB_CATEGORIA C ON (C.ID_CATEGORIA = L.ID_CATEGORIA)');
+            SQL.Add('WHERE L.DATA BETWEEN ''' + DATA_DE + ''' AND ''' + DATA_ATE + '''');
+            sql.Add('GROUP BY C.ICONE, C.DESCRICAO');
+            sql.Add('ORDER BY 3');
+            Active := true;
+        end;
+
+        Result := qry;
+        erro := '';
+
+    except on ex:exception do
+    begin
+        Result := nil;
+        erro := 'Erro ao gerar resumo: ' + ex.Message;
+    end;
+    end;
+end;
+
 
 end.

@@ -14,21 +14,21 @@ type
   TFrmPrincipal = class(TForm)
     Layout1: TLayout;
     img_menu: TImage;
-    Circle1: TCircle;
+    c_icone: TCircle;
     Image1: TImage;
     Label1: TLabel;
     Layout2: TLayout;
-    Label2: TLabel;
+    lbl_saldo: TLabel;
     Label3: TLabel;
     Layout3: TLayout;
     Layout4: TLayout;
     Layout5: TLayout;
     Image2: TImage;
-    Label4: TLabel;
+    lbl_receitas: TLabel;
     Label5: TLabel;
     Layout6: TLayout;
     Image3: TImage;
-    Label6: TLabel;
+    lbl_despesas: TLabel;
     Label7: TLabel;
     Rectangle1: TRectangle;
     img_add: TImage;
@@ -69,6 +69,8 @@ type
     procedure layout_menu_logoffClick(Sender: TObject);
   private
     procedure ListarUltLanc;
+    procedure MontaPainel;
+    procedure CarregaIcone;
     { Private declarations }
   public
     { Public declarations }
@@ -91,7 +93,8 @@ implementation
 
 {$R *.fmx}
 
-uses cLancamento, UnitDM, UnitLancamentosCad, cUsuario, UnitLogin;
+uses cLancamento, UnitDM, UnitLancamentosCad, cUsuario, UnitLogin,
+  System.DateUtils;
 
 
 //*********  UNIT FUNCOES GLOBAIS *******************
@@ -133,7 +136,76 @@ begin
     end;
 end;
 
+procedure TFrmPrincipal.CarregaIcone;
+var
+    u : TUsuario;
+    qry: TFDQuery;
+    erro: string;
+    foto: TStream;
+begin
+    try
+        u := TUsuario.Create(dm.conn);
+        qry := u.ListarUsuario(erro);
 
+        if qry.FieldByName('FOTO').AsString <> '' then
+            foto := qry.CreateBlobStream(qry.FieldByName('FOTO'), TBlobStreamMode.bmRead)
+        else
+            foto := nil;
+
+        if foto <> nil then
+        begin
+            c_icone.Fill.Bitmap.Bitmap.LoadFromStream(foto);
+            foto.DisposeOf;
+        end;
+
+    finally
+        qry.DisposeOf;
+        u.DisposeOf;
+    end;
+end;
+
+procedure TFrmPrincipal.MontaPainel;
+var
+    lanc : TLancamento;
+    qry: TFDQuery;
+    erro: string;
+
+    vl_receita, vl_despesa : double;
+begin
+    try
+        lanc := TLancamento.Create(dm.conn);
+        lanc.DATA_DE := FormatDateTime('YYYY-MM-DD', StartOfTheMonth(date));
+        lanc.DATA_ATE := FormatDateTime('YYYY-MM-DD', EndOfTheMonth(date));
+        qry := lanc.ListarLancamento(0, erro);
+
+        if erro <> '' then
+        begin
+            showmessage(erro);
+            exit;
+        end;
+
+        vl_receita := 0;
+        vl_despesa := 0;
+
+        while NOT qry.Eof do
+        begin
+            if qry.FieldByName('VALOR').AsFloat > 0 then
+                vl_receita := vl_receita + qry.FieldByName('VALOR').AsFloat
+            else
+                vl_despesa := vl_despesa + qry.FieldByName('VALOR').AsFloat;
+
+            qry.Next;
+        end;
+
+        lbl_receitas.Text := FormatFloat('#,##0.00', vl_receita);
+        lbl_despesas.Text := FormatFloat('#,##0.00', vl_despesa);
+        lbl_saldo.Text := FormatFloat('#,##0.00', vl_receita + vl_despesa); // Somamos pq o vl_desp já esta negativo...
+
+    finally
+        qry.DisposeOf;
+        lanc.DisposeOf;
+    end;
+end;
 
 procedure TFrmPrincipal.AnimationMenuFinish(Sender: TObject);
 begin
@@ -273,11 +345,15 @@ begin
         lanc.DisposeOf;
     end;
 
+    MontaPainel;
 end;
+
+
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 begin
     ListarUltLanc;
+    CarregaIcone;
 end;
 
 procedure TFrmPrincipal.img_addClick(Sender: TObject);
