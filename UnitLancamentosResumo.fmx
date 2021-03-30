@@ -148,6 +148,7 @@ object frmLancamentosResumo: TfrmLancamentosResumo
     ItemEditAppearanceClassName = 'TDynamicAppearance'
     HeaderAppearanceClassName = 'TListHeaderObjects'
     FooterAppearanceClassName = 'TListHeaderObjects'
+    OnUpdatingObjects = lv_resumoUpdatingObjects
     Align = Client
     Size.Width = 335.000000000000000000
     Size.Height = 494.000000000000000000

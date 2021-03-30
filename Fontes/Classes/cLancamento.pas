@@ -267,7 +267,7 @@ begin
         begin
             Active := false;
             sql.Clear;
-            sql.Add('SELECT C.ICONE, C.DESCRICAO, SUM(L.VALOR) AS VALOR');
+            sql.Add('SELECT C.ICONE, C.DESCRICAO, CAST(SUM(L.VALOR) AS REAL) AS VALOR');
             sql.Add('FROM    TAB_LANCAMENTO L');
             sql.Add('JOIN TAB_CATEGORIA C ON (C.ID_CATEGORIA = L.ID_CATEGORIA)');
             SQL.Add('WHERE L.DATA BETWEEN ''' + DATA_DE + ''' AND ''' + DATA_ATE + '''');

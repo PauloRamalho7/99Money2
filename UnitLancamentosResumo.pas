@@ -43,6 +43,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure img_voltarClick(Sender: TObject);
+    procedure lv_resumoUpdatingObjects(const Sender: TObject;
+      const AItem: TListViewItem; var AHandled: Boolean);
   private
     procedure AddCategoria(listview: TListView; categoria: string;
       valor: double; foto: TStream);
@@ -78,6 +80,7 @@ begin
 
         txt      := TListItemText(Objects.FindDrawable('TxtValor'));
         txt.Text := FormatFloat('#,##0.00', valor);
+        TagFloat := valor;
         if valor < 0 then
             Txt.TextColor := $FFF58162
         else
@@ -155,6 +158,19 @@ end;
 procedure TfrmLancamentosResumo.img_voltarClick(Sender: TObject);
 begin
     Close;
+end;
+
+procedure TfrmLancamentosResumo.lv_resumoUpdatingObjects(const Sender: TObject;
+  const AItem: TListViewItem; var AHandled: Boolean);
+var
+    txt : TListItemText;
+begin
+        txt      := TListItemText(AItem.Objects.FindDrawable('TxtValor'));
+        if txt.TagFloat < 0 then
+            Txt.TextColor := $FFF58162
+        else
+            Txt.TextColor := $FF69F944;
+
 end;
 
 end.
